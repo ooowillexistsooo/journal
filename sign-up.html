@@ -10,18 +10,22 @@
     <div class="signup-container">
         <h1>sign up</h1>
         <p>and then start journaling <3 </p>
-        <form method="post">
-            <input type="text" placeholder="username">
-            <input type="text" placeholder="email">
-            <input type="password" placeholder="password">
+        <form method="post" id="signup-form">
+            <input id="username" type="text" required placeholder="username">
+            <input id="email" type="email" required placeholder="email">
+            <input id="password" type="password" required placeholder="password">
             <p>do you agree to the <a href="conduct.html" target="_blank" rel="noopener noreferrer"> code of conduct?</a></p>
-            <input type="checkbox"><br>
+            <input id="conduct-agreement" required type="checkbox"><br>
             <br>
             <input type="submit" value="submit">
         </form>
+        <p id="signup-message"></p>
         <div class="footer">
             <p>already have an account? <a href="login.html">log in </a></p>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="signup.js"></script>
 </body>
 </html>

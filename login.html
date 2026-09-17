@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>log in</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="signup-container">
+        <h1>log in</h1>
+
+        <form id="login-form">
+            <input id="email" type="email" placeholder="email" required>
+            <input id="password" type="password" required placeholder="password">
+            <input type="submit" value="log in">
+        </form>
+        <p id="login-message"></p>
+        <p>dont have an account? <a href="sign-up.html">join us here!</a></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
