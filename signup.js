@@ -1,52 +1,64 @@
 const signupForm = document.querySelector("#signup-form");
 const signupMessage = document.querySelector("#signup-message");
 
-if (signupForm && signupMessage) {
-    signupForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-        const usernameInput = document.querySelector("#username");
-        const emailInput = document.querySelector("#email");
-        const passwordInput = document.querySelector("#password");
-        const conductBox = document.querySelector("#conduct-agreement");
+    const username = document.querySelector("#username").value
+        .trim()
+        .toLowerCase();
 
-        if (!usernameInput || !emailInput || !passwordInput || !conductBox) {
-            signupMessage.textContent = "form fields are missing. add the ids to the inputs.";
-            return;
-        }
+    const email = document.querySelector("#email").value.trim();
+    const password = document.querySelector("#password").value;
+    const agreement = document.querySelector("#conduct-agreement");
 
-        if (!conductBox.checked) {
-            signupMessage.textContent = "you need to agree to the code of conduct first.";
-            return;
-        }
+    const usernamePattern = /^[a-z0-9_]{3,20}$/;
 
-        const username = usernameInput.value.trim();
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+    if (!usernamePattern.test(username)) {
+        signupMessage.textContent =
+            "Username must be 3-20 characters using lowercase letters, numbers, or underscores.";
+        return;
+    }
 
-        signupMessage.textContent = "creating...";
+    if (!agreement.checked) {
+        signupMessage.textContent =
+            "You must agree to the code of conduct.";
+        return;
+    }
 
-        const { data, error } = await window.supabaseClient.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    username: username
-                },
-                emailRedirectTo: `${window.location.origin}/index.html`
+    signupMessage.textContent = "Creating account...";
+
+    const { data, error } = await window.supabaseClient.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                username: username
             }
-        });
-
-        if (error) {
-            signupMessage.textContent = error.message;
-            return;
-        }
-
-        if (data.session) {
-            signupMessage.textContent = "account created yippe!";
-            window.location.href = "index.html";
-        } else {
-            signupMessage.textContent = "hey, we created your account, but we need more confirmation so check your email to confirm you exist <3";
         }
     });
-}
+
+    if (error) {
+        signupMessage.textContent = error.message;
+        return;
+    }
+
+    const { error: profileError } = await window.supabaseClient
+        .from("profiles")
+        .insert({
+            id: data.user.id,
+            username: username
+        });
+
+    if (profileError) {
+        signupMessage.textContent = profileError.message;
+        return;
+    }
+
+    if (data.session) {
+        window.location.href = "index.html";
+    } else {
+        signupMessage.textContent =
+            "Account created. Check your email to confirm your account.";
+    }
+});

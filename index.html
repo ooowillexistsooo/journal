@@ -9,6 +9,7 @@
 <body>
     <nav xx>
         <header>the daily journal app</header>
+        <a href="new-entry.html">write a new journal</a>
     </nav>
     <h1>the daily journal app</h1>
     <p>post a daily journal entry every day :)</p>
@@ -18,8 +19,12 @@
         <p class="checkbox-p">show some recent journals?</p>
         <input type="checkbox">
         <div class="checkmark"></div>
+        <div id="journal-list"></div>
     </label>
     <a btn href="stuff.html" xx>libraries used</a>
     <p>made by <span class="moirai">will <3</span></p>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="get-posts.js"></script>
 </body>
 </html>
