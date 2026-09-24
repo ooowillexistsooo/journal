@@ -2,6 +2,11 @@
 
 body {
     font-family: "Unkempt", cursive;
+  margin: 2rem auto;
+  max-width: 60rem;
+  padding: 0 1rem;
+  background: #fffdf4;
+  color: #1a1a1a;
 }
 
 .moirai {
@@ -32,6 +37,71 @@ a:hover::after, a:focus-visible::after {
 
 p.checkbox-p {
   margin: 0;
+}
+
+.feed-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.feed-tools input,
+.feed-tools select,
+.feed-tools button,
+#profile-custom {
+  min-height: 2.5rem;
+}
+
+.feed-tools input,
+.feed-tools select,
+.feed-tools button,
+textarea,
+input {
+  font: inherit;
+}
+
+.feed-tools input,
+.feed-tools select,
+.feed-tools button {
+  padding: 0.45rem 0.7rem;
+  border: 2px solid #1a1a1a;
+  border-radius: 0.35rem;
+  background: #ffffff;
+}
+
+.feed-tools button {
+  cursor: pointer;
+}
+
+#feed-status {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+#journal-list,
+#profile-posts {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.entry,
+#profile-posts article {
+  padding: 1rem;
+  border: 2px solid #1a1a1a;
+  background: #ffffff;
+  box-shadow: 4px 4px 0 #1a1a1a;
+}
+
+#profile-custom {
+  display: block;
+  width: 100%;
+  min-height: 18rem;
+  margin: 1.5rem 0;
+  border: 2px solid #1a1a1a;
+  background: #ffffff;
 }
 
 /* From Uiverse.io by byllzz */ 

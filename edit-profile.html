@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>edit profile</h1>
+
+    <form id="profile-form">
+        <input type="text" placeholder="display name" id="display-name">
+
+        <textarea placeholder="write a short bio, or your life story, i dont care really" id="bio"></textarea>
+
+        <input type="url" placeholder="profile picture here" id="avatar-url">
+        <p>need help with getting a image link? check out <a href="picture-tutorial.html">this guide we made!</a></p>
+
+        <label for="custom-html">custom profile HTML</label>
+        <textarea id="custom-html" rows="10" placeholder="<p>hello from my profile</p>"></textarea>
+
+        <label for="custom-css">custom profile CSS</label>
+        <textarea id="custom-css" rows="10" placeholder="body { color: darkslateblue; }"></textarea>
+
+        <p>Custom HTML is displayed in a sandbox, so scripts are disabled.</p>
+
+        <button type="submit">save profile</button>
+    </form>
+
+    <p id="profile-message"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="edit-profile.js"></script>
+</body>
+</html>

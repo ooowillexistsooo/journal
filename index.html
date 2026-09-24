@@ -10,17 +10,28 @@
     <nav xx>
         <header>the daily journal app</header>
         <a href="new-entry.html">write a new journal</a>
+        <a href="edit-profile.html">edit profile</a>
     </nav>
     <h1>the daily journal app</h1>
     <p>post a daily journal entry every day :)</p>
     <p>studies show that journaling each day helps mental health</p>
     <a href="sign-up.html">sign up</a><br><br>
+    <section class="feed-tools" aria-label="journal feed controls">
+        <input id="post-search" type="search" placeholder="search public journals" aria-label="search public journals">
+        <select id="post-sort" aria-label="sort journals">
+            <option value="newest">newest first</option>
+            <option value="oldest">oldest first</option>
+        </select>
+        <button id="refresh-posts" type="button">refresh feed</button>
+        <p id="feed-status" role="status"></p>
+    </section>
     <label class="container">
         <p class="checkbox-p">show some recent journals?</p>
-        <input type="checkbox">
+        <input id="recent-toggle" type="checkbox">
         <div class="checkmark"></div>
-        <div id="journal-list"></div>
+
     </label>
+    <div id="journal-list"></div>
     <a btn href="stuff.html" xx>libraries used</a>
     <p>made by <span class="moirai">will <3</span></p>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

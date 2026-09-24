@@ -1,0 +1,10 @@
+body{
+    background-color: aquamarine;
+}
+
+h1 {
+    text-align: center;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+}
