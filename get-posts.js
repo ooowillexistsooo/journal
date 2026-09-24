@@ -53,7 +53,7 @@ function renderPosts() {
     const username = post.profiles?.username || "unknown-user";
 
     author.textContent = post.profiles?.display_name || `@${username}`;
-    author.href = `/@${username}`;
+    author.href = `profile.html?username=${encodeURIComponent(username)}`;
     content.textContent = post.content;
     date.textContent = new Date(post.created_at).toLocaleString();
     entry.append(author, content, date);
