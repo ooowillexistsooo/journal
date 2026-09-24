@@ -98,8 +98,10 @@ input {
 #profile-custom {
   display: block;
   width: 100%;
-  min-height: 18rem;
+  min-height: 60vh;
   margin: 1.5rem 0;
+  padding: 2rem;
+  box-sizing: border-box;
   border: 2px solid #1a1a1a;
   background: #ffffff;
 }

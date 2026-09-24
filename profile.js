@@ -45,15 +45,37 @@ async function loadProfile() {
         profileAvatar.hidden = false;
     }
 
-    const safeHtml = (profile.custom_html || "")
-        .replace(/<\/?(script|iframe|object|embed|base|link|meta|form)[^>]*>/gi, "")
-        .replace(/\s(on[a-z]+|formaction)\s*=\s*(['"]).*?\2/gi, "")
-        .replace(/javascript\s*:/gi, "");
-    const safeCss = (profile.custom_css || "")
+    const customDocument = new DOMParser().parseFromString(
+        profile.custom_html || "",
+        "text/html"
+    );
+
+    customDocument
+        .querySelectorAll("script, iframe, object, embed, base, link, meta, form")
+        .forEach((element) => element.remove());
+
+    customDocument.querySelectorAll("*").forEach((element) => {
+        [...element.attributes].forEach((attribute) => {
+            if (
+                attribute.name.toLowerCase().startsWith("on") ||
+                attribute.name.toLowerCase() === "formaction" ||
+                attribute.value.toLowerCase().includes("javascript:")
+            ) {
+                element.removeAttribute(attribute.name);
+            }
+        });
+    });
+
+    profileCustom.replaceChildren(...customDocument.body.childNodes);
+
+    const customStyle = document.createElement("style");
+    customStyle.id = "profile-custom-css";
+    customStyle.textContent = (profile.custom_css || "")
         .replace(/@import/gi, "")
         .replace(/javascript\s*:/gi, "");
 
-    profileCustom.srcdoc = `<!doctype html><html><head><style>${safeCss}</style></head><body>${safeHtml}</body></html>`;
+    document.querySelector("#profile-custom-css")?.remove();
+    document.head.appendChild(customStyle);
 
     const { data: posts, error: postsError } =
         await window.supabaseClient
