@@ -52,3 +52,66 @@ create policy "Anyone can view public posts"
 on posts
 for select
 using (is_public = true);
+
+create table if not exists likes (
+    id uuid primary key default gen_random_uuid(),
+    post_id uuid not null references posts(id) on delete cascade,
+    user_id uuid not null references auth.users(id) on delete cascade,
+    created_at timestamptz not null default now(),
+    unique (post_id, user_id)
+);
+
+create table if not exists comments (
+    id uuid primary key default gen_random_uuid(),
+    post_id uuid not null references posts(id) on delete cascade,
+    user_id uuid not null references auth.users(id) on delete cascade,
+    content text not null check (char_length(content) between 1 and 1000),
+    created_at timestamptz not null default now()
+);
+
+alter table likes enable row level security;
+alter table comments enable row level security;
+
+drop policy if exists "Anyone can view likes" on likes;
+create policy "Anyone can view likes"
+on likes
+for select
+using (true);
+
+drop policy if exists "Users can create their own likes" on likes;
+create policy "Users can create their own likes"
+on likes
+for insert
+with check (auth.uid() = user_id);
+
+drop policy if exists "Users can delete their own likes" on likes;
+create policy "Users can delete their own likes"
+on likes
+for delete
+using (auth.uid() = user_id);
+
+drop policy if exists "Anyone can view comments" on comments;
+create policy "Anyone can view comments"
+on comments
+for select
+using (true);
+
+drop policy if exists "Users can create their own comments" on comments;
+create policy "Users can create their own comments"
+on comments
+for insert
+with check (auth.uid() = user_id);
+
+do $$
+begin
+    if not exists (
+        select 1
+        from pg_constraint
+        where conname = 'comments_profile_id_fkey'
+    ) then
+        alter table comments
+            add constraint comments_profile_id_fkey
+            foreign key (user_id) references profiles(id) on delete cascade;
+    end if;
+end
+$$;

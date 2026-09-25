@@ -95,6 +95,47 @@ input {
   box-shadow: 4px 4px 0 #1a1a1a;
 }
 
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.post-actions button,
+.entry form button {
+  cursor: pointer;
+  font: inherit;
+  padding: 0.35rem 0.7rem;
+}
+
+.entry form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.entry form input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem;
+}
+
+.comments-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.comments-list > div {
+  padding-left: 0.75rem;
+  border-left: 3px solid currentColor;
+}
+
+.comments-list p {
+  margin: 0.2rem 0;
+}
+
 #profile-custom {
   display: block;
   width: 100%;
