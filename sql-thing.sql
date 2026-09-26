@@ -50,6 +50,20 @@ alter table posts
     add column if not exists moderation_status text not null default 'visible'
     check (moderation_status in ('visible', 'hidden'));
 
+do $$
+begin
+    if not exists (
+        select 1 from pg_constraint
+        where conname = 'posts_moderation_status_check'
+          and conrelid = 'public.posts'::regclass
+    ) then
+        alter table posts
+            add constraint posts_moderation_status_check
+            check (moderation_status in ('visible', 'hidden'));
+    end if;
+end
+$$;
+
 create table if not exists admin_users (
     user_id uuid primary key references auth.users(id) on delete cascade,
     created_at timestamptz not null default now()
@@ -72,6 +86,7 @@ as $$
     );
 $$;
 
+revoke all on function is_admin() from public;
 grant execute on function is_admin() to authenticated;
 
 drop policy if exists "Admins can read all posts" on posts;
@@ -128,9 +143,35 @@ alter table reports
     add column if not exists comment_id uuid references comments(id) on delete cascade,
     add column if not exists reviewed_at timestamptz;
 
+alter table reports alter column post_id drop not null;
+
 update reports
 set status = 'resolved'
 where status = 'closed';
+
+do $$
+begin
+    if not exists (
+        select 1 from pg_constraint
+        where conname = 'reports_exactly_one_target_check'
+          and conrelid = 'public.reports'::regclass
+    ) then
+        alter table reports
+            add constraint reports_exactly_one_target_check
+            check (num_nonnulls(post_id, comment_id) = 1) not valid;
+    end if;
+
+    if not exists (
+        select 1 from pg_constraint
+        where conname = 'reports_status_check'
+          and conrelid = 'public.reports'::regclass
+    ) then
+        alter table reports
+            add constraint reports_status_check
+            check (status in ('open', 'resolved', 'dismissed')) not valid;
+    end if;
+end
+$$;
 
 alter table reports enable row level security;
 drop policy if exists "Users can file reports" on reports;
@@ -156,7 +197,16 @@ drop policy if exists "Anyone can view likes" on likes;
 create policy "Anyone can view likes"
 on likes
 for select
-using (true);
+using (
+    auth.uid() = user_id
+    or is_admin()
+    or exists (
+        select 1 from posts
+        where posts.id = likes.post_id
+          and posts.is_public = true
+          and posts.moderation_status = 'visible'
+    )
+);
 
 drop policy if exists "Users can create their own likes" on likes;
 create policy "Users can create their own likes"
@@ -174,7 +224,16 @@ drop policy if exists "Anyone can view comments" on comments;
 create policy "Anyone can view comments"
 on comments
 for select
-using (true);
+using (
+    auth.uid() = user_id
+    or is_admin()
+    or exists (
+        select 1 from posts
+        where posts.id = comments.post_id
+          and posts.is_public = true
+          and posts.moderation_status = 'visible'
+    )
+);
 
 drop policy if exists "Admins can read all comments" on comments;
 create policy "Admins can read all comments"
