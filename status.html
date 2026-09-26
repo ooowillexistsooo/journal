@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>site status</title>
+</head>
+<body>
+    <nav>
+        <a href="index.html">go back home</a>
+    </nav>
+
+    <h1>site status</h1>
+    <p id="checked-at">not checked yet</p>
+
+    <section id="status-list" aria-live="polite">
+        <p id="site-status">checking website...</p>
+        <p id="supabase-status">checking database...</p>
+    </section>
+
+    <button id="check-again" type="button">check again</button>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        const siteStatus = document.querySelector("#site-status");
+        const supabaseStatus = document.querySelector("#supabase-status");
+        const checkedAt = document.querySelector("#checked-at");
+
+        async function checkStatus() {
+            siteStatus.textContent = "website: checking...";
+            supabaseStatus.textContent = "database: checking...";
+
+            try {
+                const response = await fetch(
+                    `./index.html?healthcheck=${Date.now()}`,
+                    {cache: "no-store"}
+                );
+
+                siteStatus.textContent = response.ok
+                    ? "website: operational"
+                    : "website: having troublr"
+            } catch {
+                siteStatus.textContent = "website: down and dead"
+            }
+
+            const {error} = await window.supabaseStatus
+                .from("profiles")
+                .select("id", {head: true, count: "exact"})
+                .limit(1);
+
+            supabaseStatus.textContent = error
+                ? "database: having troublr"
+                : "database: operational"
+
+            checkedAt.textContent =
+                `Last checked: ${new Date().toLocaleString()}`;
+        }
+
+        document
+            .querySelector("#check-again")
+            .addEventListener("click", checkStatus);
+
+        checkStatus();
+    </script>
+</body>
+</html>
