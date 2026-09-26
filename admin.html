@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin dashboard <3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="index.html">back</a>
+    </nav>
+
+    <h1>admin dashboard</h1>
+    <p>moderation and site activity</p>
+
+    <p id="admin-message"></p>
+
+    <section class="admin-stats" aria-label="site moderation totals">
+        <article><strong id="open-report-count">0</strong><span>open reports</span></article>
+        <article><strong id="post-count">0</strong><span>posts loaded</span></article>
+        <article><strong id="comment-count">0</strong><span>comments loaded</span></article>
+    </section>
+
+    <div class="admin-tools">
+        <input id="admin-search" type="search" placeholder="search loaded posts and comments">
+        <select id="report-filter" aria-label="filter reports">
+            <option value="open">open reports</option>
+            <option value="resolved">resolved reports</option>
+            <option value="dismissed">dismissed reports</option>
+            <option value="all">all reports</option>
+        </select>
+        <button id="refresh-admin" type="button">refresh dashboard</button>
+    </div>
+
+    <section>
+        <h2>reports</h2>
+        <div id="report-list"></div>
+    </section>
+
+    <section>
+        <h2>post moderation</h2>
+        <div id="admin-post-list"></div>
+    </section>
+
+    <section>
+        <h2>comment moderation</h2>
+        <div id="admin-comment-list"></div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

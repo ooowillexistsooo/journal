@@ -63,8 +63,13 @@ function renderPosts() {
 		const commentInput = document.createElement("input");
 		const commentButton = document.createElement("button");
 		const commentsList = document.createElement("div");
+		const reportButton = document.createElement("button");
+		const reportForm = document.createElement("form");
+		const reportReason = document.createElement("input");
+		const submitReportButton = document.createElement("button");
 		const username = post.profiles?.username || "unknown-user";
 
+		entry.className = "entry";
 		actions.className = "post-actions";
 		commentsList.className = "comments-list";
 		likeButton.type = "button";
@@ -75,6 +80,16 @@ function renderPosts() {
 		commentInput.required = true;
 		commentButton.type = "submit";
 		commentButton.textContent = "comment";
+		reportButton.type = "button";
+		reportButton.textContent = "report";
+		reportForm.className = "report-form";
+		reportForm.hidden = true;
+		reportReason.type = "text";
+		reportReason.placeholder = "why are you reporting this post?";
+		reportReason.maxLength = 1000;
+		reportReason.required = true;
+		submitReportButton.type = "submit";
+		submitReportButton.textContent = "send report";
 
 		author.textContent = post.profiles?.display_name || `@${username}`;
 		author.href = `profile.html?username=${encodeURIComponent(username)}`;
@@ -82,7 +97,8 @@ function renderPosts() {
 		date.textContent = new Date(post.created_at).toLocaleString();
 		actions.append(likeButton, likeCount);
 		commentForm.append(commentInput, commentButton);
-		entry.append(author, content, date, actions, commentForm, commentsList);
+		reportForm.append(reportReason, submitReportButton);
+		entry.append(author, content, date, actions, commentForm, commentsList, reportButton, reportForm);
 		list.appendChild(entry);
 
 		loadLikeState(post.id, likeButton, likeCount);
@@ -93,6 +109,13 @@ function renderPosts() {
 		);
 		commentForm.addEventListener("submit", (event) =>
 			submitComment(event, post.id, commentInput, commentsList)
+		);
+		reportButton.addEventListener("click", () => {
+			reportForm.hidden = !reportForm.hidden;
+			if (!reportForm.hidden) reportReason.focus();
+		});
+		reportForm.addEventListener("submit", (event) =>
+			submitReport(event, post.id, reportReason, reportForm, reportButton)
 		);
 	});
 }
@@ -216,6 +239,34 @@ async function submitComment(event, postId, commentInput, commentsList) {
 
 	commentInput.value = "";
 	await loadComments(postId, commentsList);
+}
+
+async function submitReport(event, postId, reasonInput, reportForm, reportButton) {
+	event.preventDefault();
+	const user = await getCurrentUser();
+	if (!user) {
+		window.location.href = "login.html";
+		return;
+	}
+
+	const reason = reasonInput.value.trim();
+	if (!reason) return;
+
+	const { error } = await window.supabaseClient.from("reports").insert({
+		reporter_id: user.id,
+		post_id: postId,
+		reason
+	});
+
+	if (error) {
+		window.alert(error.message);
+		return;
+	}
+
+	reportForm.hidden = true;
+	reportForm.reset();
+	reportButton.textContent = "reported";
+	reportButton.disabled = true;
 }
 
 document.querySelector("#post-search").addEventListener("input", renderPosts);
